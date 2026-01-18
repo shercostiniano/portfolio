@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PortableText } from "next-sanity";
 import { getPortfolioBySlug, getAllPortfolios } from "@/lib/sanity/fetch";
 import { PortfolioDetailClient } from "./PortfolioDetailClient";
+import { PortfolioNavigation } from "@/components/PortfolioNavigation";
 
 interface PortfolioPageProps {
   params: Promise<{ slug: string }>;
@@ -36,11 +37,27 @@ export async function generateMetadata({ params }: PortfolioPageProps) {
 
 export default async function PortfolioPage({ params }: PortfolioPageProps) {
   const { slug } = await params;
-  const portfolio = await getPortfolioBySlug(slug);
+  const [portfolio, allPortfolios] = await Promise.all([
+    getPortfolioBySlug(slug),
+    getAllPortfolios(),
+  ]);
 
   if (!portfolio) {
     notFound();
   }
+
+  // Find previous and next portfolios
+  const currentIndex = allPortfolios.findIndex(
+    (p) => p.slug.current === slug
+  );
+  const previousPortfolio =
+    currentIndex > 0
+      ? allPortfolios[currentIndex - 1]
+      : allPortfolios[allPortfolios.length - 1]; // Wrap to last
+  const nextPortfolio =
+    currentIndex < allPortfolios.length - 1
+      ? allPortfolios[currentIndex + 1]
+      : allPortfolios[0]; // Wrap to first
 
   const imageUrl = portfolio.mainImage?.asset?.url;
 
@@ -188,6 +205,12 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
           )}
         </div>
       </div>
+
+      {/* Previous/Next Navigation */}
+      <PortfolioNavigation
+        previous={previousPortfolio !== portfolio ? previousPortfolio : null}
+        next={nextPortfolio !== portfolio ? nextPortfolio : null}
+      />
     </main>
   );
 }
