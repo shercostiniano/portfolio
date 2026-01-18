@@ -195,6 +195,7 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
                         src={image.asset.url}
                         alt={image.alt || `${portfolio.title} screenshot ${index + 1}`}
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover"
                       />
                     </div>

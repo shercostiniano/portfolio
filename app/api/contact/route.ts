@@ -3,45 +3,19 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Simple in-memory rate limiting
-const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
-const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const MAX_REQUESTS = 3;
-
-function getRateLimitKey(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
-  return ip;
-}
-
-function isRateLimited(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-
-  if (!entry || now - entry.timestamp > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(key, { count: 1, timestamp: now });
-    return false;
-  }
-
-  if (entry.count >= MAX_REQUESTS) {
-    return true;
-  }
-
-  entry.count++;
-  return false;
+function escapeHtml(text: string): string {
+  const htmlEntities: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEntities[char]);
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const rateLimitKey = getRateLimitKey(request);
-    if (isRateLimited(rateLimitKey)) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 }
-      );
-    }
-
     const body = await request.json();
     const { name, email, message } = body;
 
@@ -66,13 +40,13 @@ export async function POST(request: NextRequest) {
     const { error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
       to: process.env.CONTACT_EMAIL || "contact@example.com",
-      subject: `Portfolio Contact: ${name}`,
+      subject: `Portfolio Contact: ${escapeHtml(name)}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
+        <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>
       `,
       replyTo: email,
     });
@@ -86,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Contact form error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

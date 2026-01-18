@@ -1,19 +1,16 @@
 {
   "project": "Portfolio",
   "branchName": "ralph/portfolio-website",
-  "description": "Data Analytics & Automation Portfolio - Interactive portfolio with parallax scrolling, animated data visualizations, and Sanity CMS integration",
+  "description": "React Best Practices Fixes - Address security vulnerabilities, performance issues, and code quality problems",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Initialize Next.js project with Tailwind CSS",
-      "description": "As a developer, I need a properly configured Next.js project with Tailwind CSS so I have a solid foundation to build upon.",
+      "title": "Fix XSS vulnerability in contact email",
+      "description": "As a developer, I need to sanitize user input in the contact API so that malicious HTML/JavaScript cannot be injected into emails.",
       "acceptanceCriteria": [
-        "Next.js 14+ project initialized with App Router",
-        "Tailwind CSS installed and configured",
-        "Custom theme configured in tailwind.config.ts with colors: navy #0f172a, teal #14b8a6, cyan #06b6d4, slate #64748b/#94a3b8",
-        "Inter and Plus Jakarta Sans fonts configured via next/font",
-        "ESLint configured",
-        "Base layout component created at app/layout.tsx with metadata",
+        "User message content is escaped before being inserted into HTML email",
+        "HTML entities (<, >, &, \", ') are properly escaped",
+        "Line breaks still convert to <br> tags after escaping",
         "Typecheck passes"
       ],
       "priority": 1,
@@ -22,15 +19,12 @@
     },
     {
       "id": "US-002",
-      "title": "Create reusable scroll animation components",
-      "description": "As a developer, I need reusable animation wrapper components so elements animate consistently as they enter the viewport.",
+      "title": "Remove ineffective rate limiting",
+      "description": "As a developer, I need to remove the in-memory rate limiting that doesn't work in serverless environments.",
       "acceptanceCriteria": [
-        "Framer Motion installed",
-        "FadeIn component that fades in on scroll",
-        "SlideIn component with configurable direction (up, down, left, right)",
-        "ScaleIn component that scales from 0.8 to 1",
-        "All components accept delay, duration props",
-        "All components respect prefers-reduced-motion",
+        "Remove rateLimitMap and related rate limiting logic from contact API",
+        "Remove rate limit check and 429 response handling",
+        "API still validates input and sends emails correctly",
         "Typecheck passes"
       ],
       "priority": 2,
@@ -39,14 +33,13 @@
     },
     {
       "id": "US-003",
-      "title": "Initialize Sanity CMS project",
-      "description": "As a developer, I need Sanity CMS set up so content can be managed without code changes.",
+      "title": "Fix Hero component index keys",
+      "description": "As a developer, I need to replace array index keys with stable keys so character animations work correctly.",
       "acceptanceCriteria": [
-        "Sanity project initialized in /sanity directory",
-        "Sanity Studio embedded at /studio route in Next.js",
-        "Environment variables for SANITY_PROJECT_ID and SANITY_DATASET configured in .env.local.example",
-        "Sanity client configured in lib/sanity/client.ts",
-        "Typecheck passes"
+        "Replace key={index} with stable key like key={`${char}-${index}`} in name character split",
+        "Animation still works correctly on page load",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 3,
       "passes": false,
@@ -54,14 +47,13 @@
     },
     {
       "id": "US-004",
-      "title": "Create portfolio schema in Sanity",
-      "description": "As a content manager, I need a portfolio schema so I can add and edit projects in the CMS.",
+      "title": "Fix AnimatedCounter uninitialized variable",
+      "description": "As a developer, I need to properly initialize the startTime variable to prevent potential NaN issues.",
       "acceptanceCriteria": [
-        "Portfolio document schema with fields: title, slug, description (rich text), category, technologies (array), mainImage, images (array), liveUrl, repoUrl, featured (boolean), order (number)",
-        "Category document schema with fields: title, slug, description",
-        "Technology document schema with fields: name, icon, color",
-        "Sample portfolio item created in schema for testing",
-        "Typecheck passes"
+        "Initialize startTime to 0 instead of leaving undefined",
+        "Counter animation still works correctly",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
       "passes": false,
@@ -69,14 +61,14 @@
     },
     {
       "id": "US-005",
-      "title": "Create Sanity fetch utilities and TypeScript types",
-      "description": "As a developer, I need typed fetch functions so I can query portfolio data safely.",
+      "title": "Add useMemo to PortfolioGrid filtering",
+      "description": "As a developer, I need to memoize the filtered portfolios array to prevent unnecessary recalculations on re-renders.",
       "acceptanceCriteria": [
-        "TypeScript interfaces for Portfolio, Category, Technology in lib/sanity/types.ts",
-        "GROQ queries in lib/sanity/queries.ts",
-        "Fetch functions: getAllPortfolios, getPortfolioBySlug, getFeaturedPortfolios, getPortfoliosByCategory",
-        "Functions return typed data",
-        "Typecheck passes"
+        "Wrap filteredPortfolios calculation in useMemo",
+        "Dependencies include portfolios and activeCategory",
+        "Portfolio filtering still works correctly",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
       "passes": false,
@@ -84,15 +76,11 @@
     },
     {
       "id": "US-006",
-      "title": "Build navigation header component",
-      "description": "As a visitor, I want a navigation header so I can easily navigate the portfolio sections.",
+      "title": "Fix HuggingFaceChart useEffect dependency",
+      "description": "As a developer, I need to fix the useEffect dependency array to prevent potential infinite loops.",
       "acceptanceCriteria": [
-        "Fixed header component at components/Navigation.tsx",
-        "Nav links: Home, About, Projects, Contact",
-        "Header background becomes solid on scroll (starts transparent)",
-        "Active section highlighted based on scroll position",
-        "Smooth scroll to sections on nav click",
-        "Logo/name links to top",
+        "Remove isAnimated from the useEffect dependency array",
+        "Animation still triggers once when chart comes into view",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
@@ -102,16 +90,12 @@
     },
     {
       "id": "US-007",
-      "title": "Add mobile hamburger menu to navigation",
-      "description": "As a mobile visitor, I want a hamburger menu so I can navigate on small screens.",
+      "title": "Add sizes attribute to PortfolioCard images",
+      "description": "As a developer, I need to add responsive sizes attribute to portfolio card images for better performance.",
       "acceptanceCriteria": [
-        "Hamburger icon visible on screens < 768px",
-        "Desktop nav hidden on mobile",
-        "Menu opens as slide-in panel or dropdown",
-        "Animated open/close transition",
-        "Menu closes when link is clicked",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Add sizes attribute with responsive breakpoints (e.g., (max-width: 768px) 100vw, 33vw)",
+        "Images still display correctly at all viewport sizes",
+        "Typecheck passes"
       ],
       "priority": 7,
       "passes": false,
@@ -119,18 +103,12 @@
     },
     {
       "id": "US-008",
-      "title": "Build hero section with parallax effect",
-      "description": "As a visitor, I want an impressive hero section that captures attention with parallax depth.",
+      "title": "Add sizes attribute to portfolio gallery images",
+      "description": "As a developer, I need to add sizes attribute to gallery images in portfolio detail pages.",
       "acceptanceCriteria": [
-        "Full-viewport hero section component at components/Hero.tsx",
-        "Displays name: Sherwyne Costiniano",
-        "Displays title: Data Scientist & Automation Engineer",
-        "Multi-layer parallax effect using Framer Motion useScroll and useTransform",
-        "Background layer moves slower than foreground",
-        "Animated typing effect or text reveal for tagline",
-        "Smooth scroll indicator arrow at bottom",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Add appropriate sizes attribute to gallery images",
+        "Images still display correctly in gallery view",
+        "Typecheck passes"
       ],
       "priority": 8,
       "passes": false,
@@ -138,16 +116,13 @@
     },
     {
       "id": "US-009",
-      "title": "Create animated counter component",
-      "description": "As a developer, I need a reusable animated counter so I can display stats that count up on scroll.",
+      "title": "Create app-level error boundary",
+      "description": "As a developer, I need to add an error boundary so component errors don't crash the entire page.",
       "acceptanceCriteria": [
-        "AnimatedCounter component at components/AnimatedCounter.tsx",
-        "Accepts props: value (number), duration (ms), prefix, suffix",
-        "Counts from 0 to value when component enters viewport",
-        "Uses Framer Motion useInView for triggering",
-        "Smooth easing animation",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Create app/error.tsx with proper Next.js error boundary pattern",
+        "Error UI shows user-friendly message with retry option",
+        "Error is logged for debugging",
+        "Typecheck passes"
       ],
       "priority": 9,
       "passes": false,
@@ -155,16 +130,12 @@
     },
     {
       "id": "US-010",
-      "title": "Create skill progress bar component",
-      "description": "As a developer, I need animated progress bars so I can display skill proficiency levels.",
+      "title": "Fix Sanity types for optional asset",
+      "description": "As a developer, I need to make the asset property properly nullable in Sanity types.",
       "acceptanceCriteria": [
-        "SkillBar component at components/SkillBar.tsx",
-        "Accepts props: name (string), percentage (number), color (optional)",
-        "Bar animates from 0% to percentage width on scroll",
-        "Shows skill name and percentage label",
-        "Uses teal/cyan color scheme by default",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Change asset: to asset?: in mainImage and gallery image types",
+        "Add optional chaining where asset is accessed",
+        "Typecheck passes"
       ],
       "priority": 10,
       "passes": false,
@@ -172,298 +143,15 @@
     },
     {
       "id": "US-011",
-      "title": "Create GitHub stats API route",
-      "description": "As a developer, I need an API route to fetch GitHub stats so the portfolio shows live data.",
+      "title": "Add proper error typing in API catch blocks",
+      "description": "As a developer, I need to properly type error variables in catch blocks.",
       "acceptanceCriteria": [
-        "API route at app/api/github/route.ts",
-        "Fetches user data from GitHub API for user 'shercostiniano'",
-        "Returns: public_repos, followers, following",
-        "Caches response for 1 hour using Next.js revalidate",
-        "Returns fallback static data if GitHub API fails",
+        "Change catch (error) to catch (error: unknown) in GitHub API route",
+        "Change catch (error) to catch (error: unknown) in HuggingFace API route",
+        "Change catch (error) to catch (error: unknown) in contact API route",
         "Typecheck passes"
       ],
       "priority": 11,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-012",
-      "title": "Create HuggingFace stats API route",
-      "description": "As a developer, I need an API route to fetch HuggingFace model downloads so the portfolio shows live data.",
-      "acceptanceCriteria": [
-        "API route at app/api/huggingface/route.ts",
-        "Fetches model data from HuggingFace API for user 'scostiniano'",
-        "Returns array of models with name and downloads count",
-        "Caches response for 1 hour using Next.js revalidate",
-        "Returns fallback static data if HuggingFace API fails",
-        "Typecheck passes"
-      ],
-      "priority": 12,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-013",
-      "title": "Build About section with bio and skills",
-      "description": "As a visitor, I want to learn about the portfolio owner through an engaging About section.",
-      "acceptanceCriteria": [
-        "About section component at components/About.tsx",
-        "Profile photo placeholder with hover effect (scale/shadow)",
-        "Bio text with scroll-triggered fade-in",
-        "Skills displayed using SkillBar components",
-        "Skills: Python 90%, NLP 85%, Data Analytics 85%, Automation 80%, Flask/API 75%",
-        "Section uses FadeIn/SlideIn animation wrappers",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 13,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-014",
-      "title": "Build GitHub stats visualization card",
-      "description": "As a visitor, I want to see animated GitHub statistics displayed attractively.",
-      "acceptanceCriteria": [
-        "GitHubStats component at components/GitHubStats.tsx",
-        "Fetches data from /api/github route",
-        "Displays repos, followers, following using AnimatedCounter",
-        "Card design with teal accent border",
-        "Loading state while fetching",
-        "Error state falls back to static values (40 repos, 10 followers, 16 following)",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 14,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-015",
-      "title": "Build HuggingFace downloads bar chart",
-      "description": "As a visitor, I want to see a bar chart of HuggingFace model downloads.",
-      "acceptanceCriteria": [
-        "HuggingFaceChart component at components/HuggingFaceChart.tsx",
-        "Fetches data from /api/huggingface route",
-        "Displays horizontal bar chart using Recharts",
-        "Bars animate on scroll into view",
-        "Model names on Y-axis, downloads on X-axis",
-        "Uses teal/cyan color palette",
-        "Loading and error states",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 15,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-016",
-      "title": "Create Stats section combining GitHub and HuggingFace visualizations",
-      "description": "As a visitor, I want a dedicated stats section showcasing data analytics expertise.",
-      "acceptanceCriteria": [
-        "Stats section component at components/Stats.tsx",
-        "Section title: 'By the Numbers'",
-        "Contains GitHubStats and HuggingFaceChart components",
-        "Responsive layout: side by side on desktop, stacked on mobile",
-        "Section animates in on scroll",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 16,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-017",
-      "title": "Build portfolio card component",
-      "description": "As a developer, I need a reusable portfolio card for displaying projects in a grid.",
-      "acceptanceCriteria": [
-        "PortfolioCard component at components/PortfolioCard.tsx",
-        "Accepts Portfolio type as prop",
-        "Displays: image, title, category, technology tags",
-        "Hover effects: image zoom, overlay with description, subtle lift",
-        "Featured badge shown if featured is true",
-        "Links to /portfolio/[slug]",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 17,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-018",
-      "title": "Build portfolio grid section with filtering",
-      "description": "As a visitor, I want to browse portfolio projects in a grid with category filtering.",
-      "acceptanceCriteria": [
-        "PortfolioGrid component at components/PortfolioGrid.tsx",
-        "Fetches portfolios from Sanity",
-        "Responsive grid: 1 col mobile, 2 col tablet, 3 col desktop",
-        "Category filter buttons at top",
-        "Filter updates URL params (?category=ai-ml)",
-        "Cards animate in on scroll with staggered delay",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 18,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-019",
-      "title": "Build portfolio detail page",
-      "description": "As a visitor, I want to view detailed information about a project.",
-      "acceptanceCriteria": [
-        "Dynamic route at app/portfolio/[slug]/page.tsx",
-        "Fetches portfolio by slug from Sanity",
-        "Hero image with parallax effect",
-        "Project title and rich text description",
-        "Technology stack with icons",
-        "Links to live demo and source code",
-        "Back to projects link",
-        "404 handling for invalid slugs",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 19,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-020",
-      "title": "Add next/previous navigation to portfolio detail page",
-      "description": "As a visitor, I want to navigate between projects without going back to the grid.",
-      "acceptanceCriteria": [
-        "Previous/Next project links at bottom of portfolio detail page",
-        "Shows project title and thumbnail preview",
-        "Wraps around (last project links to first)",
-        "Hover effect on navigation cards",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 20,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-021",
-      "title": "Build contact form UI",
-      "description": "As a visitor, I want a contact form so I can reach out to the portfolio owner.",
-      "acceptanceCriteria": [
-        "Contact section component at components/Contact.tsx",
-        "Form fields: name, email, message (all required)",
-        "React Hook Form for form handling",
-        "Zod schema for validation",
-        "Animated error states (shake, red border)",
-        "Submit button with hover effect",
-        "Social links row: GitHub, LinkedIn, Twitter, HuggingFace, Medium",
-        "Social icons with hover micro-interactions",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 21,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-022",
-      "title": "Integrate Resend for contact form email",
-      "description": "As a visitor, I want my contact form submission to send an email to the portfolio owner.",
-      "acceptanceCriteria": [
-        "Server action at app/actions/contact.ts",
-        "Resend SDK installed and configured",
-        "RESEND_API_KEY in .env.local.example",
-        "Email sent to configured recipient with form data",
-        "Success/error toast notification shown to user",
-        "Basic rate limiting (max 3 submissions per minute per IP)",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 22,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-023",
-      "title": "Add micro-interactions and polish",
-      "description": "As a visitor, I want delightful micro-interactions that make the site feel polished.",
-      "acceptanceCriteria": [
-        "Button hover states: scale to 1.02, subtle shadow",
-        "Link underline animations (grow from center)",
-        "Card tilt effect on hover using CSS transform perspective",
-        "All interactive elements have visible focus states",
-        "Smooth transitions (300-500ms, ease-out)",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 23,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-024",
-      "title": "Assemble home page with all sections",
-      "description": "As a visitor, I want to see all sections on the home page in the correct order.",
-      "acceptanceCriteria": [
-        "Home page at app/page.tsx imports all section components",
-        "Section order: Hero, About, Stats, PortfolioGrid, Contact",
-        "Each section has an id for navigation anchoring",
-        "Smooth scrolling enabled",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
-      ],
-      "priority": 24,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-025",
-      "title": "Configure SEO and metadata",
-      "description": "As a site owner, I want proper SEO so the portfolio ranks well in search engines.",
-      "acceptanceCriteria": [
-        "Metadata configured in app/layout.tsx: title, description, keywords",
-        "Open Graph tags for social sharing",
-        "Twitter card metadata",
-        "Favicon configured",
-        "Sitemap generated at /sitemap.xml using next-sitemap or app router",
-        "robots.txt configured",
-        "Typecheck passes"
-      ],
-      "priority": 25,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-026",
-      "title": "Optimize performance and images",
-      "description": "As a site owner, I want the portfolio to load fast.",
-      "acceptanceCriteria": [
-        "All images use next/image with proper sizing",
-        "Lazy loading for below-fold content",
-        "Bundle analyzed for large dependencies",
-        "No layout shift on load (CLS < 0.1)",
-        "Lighthouse Performance score 90+",
-        "Typecheck passes"
-      ],
-      "priority": 26,
-      "passes": false,
-      "notes": ""
-    },
-    {
-      "id": "US-027",
-      "title": "Create Dockerfile and docker-compose for deployment",
-      "description": "As a developer, I want to deploy the portfolio to my VPS using Docker.",
-      "acceptanceCriteria": [
-        "Dockerfile using Node.js Alpine image",
-        "Multi-stage build for smaller image",
-        "docker-compose.yml with Next.js service",
-        "Environment variables passed via docker-compose",
-        ".env.local.example documents all required env vars",
-        "README.md includes deployment instructions",
-        "Typecheck passes"
-      ],
-      "priority": 27,
       "passes": false,
       "notes": ""
     }

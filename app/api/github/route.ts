@@ -38,7 +38,7 @@ export async function GET() {
       followers: data.followers ?? FALLBACK_DATA.followers,
       following: data.following ?? FALLBACK_DATA.following,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error fetching GitHub data:", error);
     return NextResponse.json(FALLBACK_DATA);
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { PortfolioCard } from "./PortfolioCard";
@@ -22,11 +22,15 @@ export function PortfolioGrid({ portfolios, categories }: PortfolioGridProps) {
     setActiveCategory(category);
   }, [searchParams]);
 
-  const filteredPortfolios = activeCategory
-    ? portfolios.filter(
-        (p) => p.category?.slug?.current === activeCategory
-      )
-    : portfolios;
+  const filteredPortfolios = useMemo(
+    () =>
+      activeCategory
+        ? portfolios.filter(
+            (p) => p.category?.slug?.current === activeCategory
+          )
+        : portfolios,
+    [portfolios, activeCategory]
+  );
 
   const handleCategoryChange = (categorySlug: string | null) => {
     if (categorySlug) {

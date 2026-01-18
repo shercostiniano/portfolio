@@ -54,7 +54,8 @@ export function HuggingFaceChart() {
     if (isInView && !isAnimated && data.length > 0) {
       setIsAnimated(true);
     }
-  }, [isInView, isAnimated, data.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInView, data.length]);
 
   const chartData = isAnimated ? data : data.map((d) => ({ ...d, downloads: 0 }));
 

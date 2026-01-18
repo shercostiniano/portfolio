@@ -69,7 +69,7 @@ export function Hero() {
         >
           {name.split("").map((char, index) => (
             <motion.span
-              key={index}
+              key={`${char}-${index}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{

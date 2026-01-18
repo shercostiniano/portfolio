@@ -54,7 +54,7 @@ export async function GET() {
     models.sort((a, b) => b.downloads - a.downloads);
 
     return NextResponse.json(models);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error fetching HuggingFace data:", error);
     return NextResponse.json(FALLBACK_DATA);
   }

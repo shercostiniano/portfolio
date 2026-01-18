@@ -22,14 +22,14 @@ export interface Portfolio {
   category?: Category;
   technologies?: Technology[];
   mainImage?: {
-    asset: {
+    asset?: {
       _ref: string;
       url?: string;
     };
     alt?: string;
   };
   images?: {
-    asset: {
+    asset?: {
       _ref: string;
       url?: string;
     };

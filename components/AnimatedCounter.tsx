@@ -32,7 +32,7 @@ export function AnimatedCounter({
       return;
     }
 
-    let startTime: number;
+    let startTime: number = 0;
     let animationFrame: number;
 
     const animate = (timestamp: number) => {
